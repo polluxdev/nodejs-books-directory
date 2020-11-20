@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -5,6 +6,7 @@ const cors = require("cors");
 const multer = require("multer");
 
 const bookRoutes = require("./routes/book");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -35,9 +37,6 @@ const fileStorage = multer.diskStorage({
   },
 });
 
-app.use(cors());
-
-app.use("/images", express.static("images"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -48,6 +47,9 @@ app.use(
     limits: { fileSize: 1024 * 1024 * 5 },
   }).single("image")
 );
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+app.use(cors());
 
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -66,20 +68,14 @@ app.use(
 // });
 
 app.use("/api", bookRoutes);
-
-app.use((req, res, next) => {
-  const error = new Error("Not found");
-  error.status = 404;
-  next(error);
-});
+app.use("/api", authRoutes);
 
 app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
-    error: {
-      message: error.message,
-    },
-  });
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
 });
 
 mongoose

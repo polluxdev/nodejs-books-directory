@@ -28,7 +28,10 @@ exports.getBooks = async (req, res, next) => {
     res.status(200).json(response);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
 
@@ -69,8 +72,10 @@ exports.createBook = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
 
@@ -86,8 +91,10 @@ exports.getBook = async (req, res, next) => {
       res.status(404).json({ message: "No valid book with the ID." });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
 
@@ -122,8 +129,10 @@ exports.updateBook = async (req, res, next) => {
       .status(200)
       .json({ message: "Book updated successfully!", book: result });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
 
@@ -143,7 +152,9 @@ exports.deleteBook = async (req, res, next) => {
       result: { _id: bookId },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
