@@ -5,16 +5,22 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 exports.postSignup = async (req, res, next) => {
+  const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
   try {
     const checkUser = await User.findOne({ email: email });
     if (checkUser) {
       return res.status(409).json({ message: "Email has already exist!" });
     }
-    const hashedPw = await bcrypt.hash(password, 12);
+    if (password !== confirmPassword) {
+      return res.status(409).json({ message: "Password does not match!" });
+    }
+    const hashedPw = await bcrypt.hash(confirmPassword, 12);
     const user = new User({
       _id: new mongoose.Types.ObjectId(),
+      name: name,
       email: email,
       password: hashedPw,
     });
@@ -53,19 +59,6 @@ exports.postLogin = async (req, res, next) => {
         .json({ message: "Login successfully!", token: token });
     }
     res.status(401).json({ message: "Auth failed!" });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-};
-
-exports.deleteUser = async (req, res, next) => {
-  const userId = req.params.userId;
-  try {
-    await User.deleteOne({ _id: userId });
-    res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

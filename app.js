@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -7,6 +7,7 @@ const multer = require("multer");
 
 const bookRoutes = require("./routes/book");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use(
     limits: { fileSize: 1024 * 1024 * 5 },
   }).single("image")
 );
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use(cors());
 
@@ -69,6 +70,7 @@ app.use(cors());
 
 app.use("/api", bookRoutes);
 app.use("/api", authRoutes);
+app.use("/api", userRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

@@ -32,7 +32,6 @@ exports.getBooks = async (req, res, next) => {
     };
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
