@@ -3,7 +3,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.header('Authorization');
   if (!authHeader) {
     console.log(req.file);
     if (req.file) {
@@ -30,5 +30,6 @@ module.exports = (req, res, next) => {
     throw error;
   }
   req.userId = decodedToken.userId;
+  req.token = token;
   next();
 };
